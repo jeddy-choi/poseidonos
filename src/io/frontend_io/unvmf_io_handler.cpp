@@ -120,6 +120,14 @@ UNVMfSubmitHandler(struct pos_io* io)
                 return POS_IO_STATUS_SUCCESS;
             }
             break;
+            case IO_TYPE::DEALLOCATE:
+            {
+                AIO aio;
+                aio.SubmitTrim(*io);
+                airlog("TotalRequestedTrimCnt", "user", io->volume_id, 1);
+                return POS_IO_STATUS_SUCCESS;
+            }
+            break;
             default:
             {
                 POS_EVENT_ID eventId = EID(BLKHDLR_WRONG_IO_DIRECTION);

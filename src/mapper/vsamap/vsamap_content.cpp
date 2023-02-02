@@ -83,12 +83,13 @@ VSAMapContent::GetEntry(BlkAddr rba)
     char* mpage = map->GetMpage(pageNr);
 
     if (unlikely(nullptr == mpage))
-    {
+    {        
         return UNMAP_VSA;
     }
     else
     {
         uint64_t entNr = rba % entriesPerMpage;
+
         return ((VirtualBlkAddr*)mpage)[entNr];
     }
 }

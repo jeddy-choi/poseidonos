@@ -102,16 +102,22 @@ Translator::Translator(uint32_t volumeId, BlkAddr startRba, uint32_t blockCount,
 
     if (likely(iVSAMap != nullptr))
     {
+        if (MAX_PROCESSABLE_BLOCK_COUNT >= blockCount)
+        {
         iVSAMap->GetVSAs(volumeId, startRba, blockCount, vsaArray);
+        }
     }
 
     if (likely(iStripeMap != nullptr))
     {
+        if (MAX_PROCESSABLE_BLOCK_COUNT >= blockCount)
+        {
         for (uint32_t blockIndex = 0; blockIndex < blockCount; blockIndex++)
         {
             BlkAddr rba = startRba + blockIndex;
             VirtualBlkAddr vsa = vsaArray[blockIndex];
             lsidRefResults[blockIndex] = _GetLsidRefResult(rba, vsa);
+        }
         }
     }
 }
@@ -156,6 +162,27 @@ Translator::Translator(const VirtualBlkAddr& vsa, int arrayId, StripeId userLsid
 Translator::Translator(uint32_t volumeId, BlkAddr rba, int arrayId, bool isRead)
 : Translator(volumeId, rba, ONLY_ONE, arrayId, isRead)
 {
+}
+
+
+VirtualBlkAddr
+Translator::GetVsaOverSize(uint32_t blockIndex)
+{
+    BlkAddr rba = startRba + blockIndex;
+
+    iVSAMap->GetVSAs(volumeId, rba, 1, vsaArray);
+
+    return vsaArray[0];
+}
+
+StripeAddr
+Translator::GetLsidEntryOverSize(uint32_t blockIndex)
+{
+    BlkAddr rba = startRba + blockIndex;
+    VirtualBlkAddr vsa = GetVsaOverSize(blockIndex);
+
+    return std::get<0>(_GetLsidRefResult(rba, vsa));
+
 }
 
 VirtualBlkAddr

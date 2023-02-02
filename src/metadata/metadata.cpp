@@ -80,6 +80,8 @@ Metadata::Metadata(IArrayInfo* info, Mapper* mapper, Allocator* allocator,
     auto sizeInfo = info->GetSizeInfo(PartitionType::USER_DATA);
     segmentContextUpdater = new SegmentContextUpdater(allocator->GetISegmentCtx(), journal->GetVersionedSegmentContext(), sizeInfo);
 
+    MetaServiceSingleton::Instance()->SetsegmentContextUpdater(segmentContextUpdater);
+
     metaEventFactory = new MetaEventFactory(
         mapper->GetIVSAMap(),
         mapper->GetIStripeMap(),

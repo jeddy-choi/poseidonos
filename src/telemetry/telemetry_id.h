@@ -214,6 +214,11 @@ static const std::string TEL140010_COUNT_OF_USER_WRITE_PENDING_CNT = "count_of_u
 static const std::string TEL140011_COUNT_OF_INTERNAL_IO_PENDING_CNT = "count_of_internal_io_pending_cnt";
 static const std::string TEL140012_CALLBACK_OLDEST_TIME_INDEX = "callback_oldest_time_idx";
 static const std::string TEL140013_CALLBACK_CURRENT_TIME_INDEX = "callback_current_time_idx";
+static const std::string TEL140014_COUNT_OF_TOTAL_USER_READ_CNT = "TotalRequestedWriteCnt";
+static const std::string TEL140015_COUNT_OF_TOTAL_USER_WRITE_CNT = "TotalRequestedReadCnt";
+static const std::string TEL140016_COUNT_OF_TOTAL_TRIM_CNT = "TotalRequestedTrimCnt";
+
+
 
 static const std::string TEL150000_REPLICATION_STATUS = "replication_status";
 

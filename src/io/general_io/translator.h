@@ -61,10 +61,13 @@ public:
     virtual PhysicalBlkAddr GetPba(void);
     virtual list<PhysicalEntry> GetPhysicalEntries(void* mem, uint32_t blockCount);
     virtual StripeAddr GetLsidEntry(uint32_t blockIndex);
+
     virtual LsidRefResult GetLsidRefResult(uint32_t blockIndex);
     virtual bool IsUnmapped(void);
     virtual bool IsMapped(void);
     virtual VirtualBlkAddr GetVsa(uint32_t blockIndex);
+    VirtualBlkAddr GetVsaOverSize(uint32_t blockIndex);
+    StripeAddr GetLsidEntryOverSize(uint32_t blockIndex);
 
 private:
     static const uint32_t ONLY_ONE = 1;

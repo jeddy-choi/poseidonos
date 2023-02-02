@@ -40,6 +40,8 @@
 #include "src/meta_service/i_meta_updater.h"
 #include "src/journal_manager/i_journal_status_provider.h"
 
+#include "src/allocator/i_segment_ctx.h"
+
 namespace pos
 {
 class MetaService
@@ -57,6 +59,9 @@ public:
     virtual IJournalStatusProvider* GetJournalStatusProvider(std::string arrayName);
     virtual IJournalStatusProvider* GetJournalStatusProvider(int arrayId);
 
+    ISegmentCtx* GetsegmentContextUpdater() {return segmentContextUpdater;}
+    void SetsegmentContextUpdater(ISegmentCtx* test) {segmentContextUpdater = test;}
+
 protected:
     MetaService(void);
     virtual ~MetaService(void);
@@ -65,6 +70,9 @@ private:
     std::array<IMetaUpdater*, ArrayMgmtPolicy::MAX_ARRAY_CNT> metaUpdaters;
     std::array<IJournalStatusProvider*, ArrayMgmtPolicy::MAX_ARRAY_CNT> journalStatusProviders;
     std::unordered_map<std::string, int> arrayNameToId;
+
+
+    ISegmentCtx* segmentContextUpdater;
 };
 
 using MetaServiceSingleton = Singleton<MetaService>;

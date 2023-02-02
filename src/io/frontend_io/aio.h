@@ -40,6 +40,7 @@
 #include "src/array_mgmt/interface/i_array_mgmt.h"
 #include "src/array_models/interface/i_array_info.h"
 #include "src/bio/flush_io.h"
+#include "src/bio/trim_io.h"
 #include "src/bio/volume_io.h"
 #include "src/event_scheduler/callback.h"
 #include "src/spdk_wrapper/event_framework_api.h"
@@ -86,6 +87,7 @@ public:
     AIO(void);
     virtual void SubmitAsyncIO(VolumeIoSmartPtr volIo);
     void SubmitFlush(pos_io& posIo);
+    void SubmitTrim(pos_io& posIo);
     void CompleteIOs(void);
     VolumeIoSmartPtr CreateVolumeIo(pos_io& posIo);
     virtual VolumeIoSmartPtr CreatePosReplicatorVolumeIo(pos_io& posIo, uint64_t lsn);
@@ -94,6 +96,7 @@ public:
 private:
     static thread_local IOCtx ioContext;
     FlushIoSmartPtr _CreateFlushIo(pos_io& posIo);
+    TrimIoSmartPtr _CreateTrimIo(pos_io& posIo);
     VolumeIoSmartPtr _CreateVolumeIo(pos_io& posIo);
     void _IncreaseIoContextCnt(bool needPollingNecessary);
 };

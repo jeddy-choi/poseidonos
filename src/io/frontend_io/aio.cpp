@@ -55,6 +55,7 @@
 #include "src/include/memory.h"
 #include "src/io/frontend_io/flush_command_handler.h"
 #include "src/io/frontend_io/read_submission.h"
+#include "src/io/frontend_io/trim_command_handler.h"
 #include "src/io/frontend_io/write_submission.h"
 #include "src/io_scheduler/io_dispatcher.h"
 #include "src/logger/logger.h"
@@ -301,6 +302,40 @@ AIO::SubmitFlush(pos_io& posIo)
 
     SpdkEventScheduler::ExecuteOrScheduleEvent(flushIo->GetOriginCore(), std::make_shared<FlushCmdHandler>(flushIo));
     return;
+}
+
+TrimIoSmartPtr
+AIO::_CreateTrimIo(pos_io& posIo)
+{
+    int arrayId(posIo.array_id);
+
+        POS_TRACE_ERROR(9999, "Requested trim strat rba : {} size : {}", posIo.offset, posIo.length);
+
+    uint64_t sectorRba = ChangeByteToSector(posIo.offset);
+    uint64_t sectorSize = ChangeByteToSector(posIo.length);
+
+    TrimIoSmartPtr trimIo(new TrimIo(arrayId, sectorRba, sectorSize));
+    trimIo->SetVolumeId(posIo.volume_id);
+    return trimIo;
+}
+
+void
+AIO::SubmitTrim(pos_io& posIo)
+{
+    // send curren volume valid map count
+
+
+    // process map invalidate
+    TrimIoSmartPtr trimhIo = _CreateTrimIo(posIo);
+    //SpdkEventScheduler::ExecuteOrScheduleEvent(trimhIo->GetOriginCore(), std::make_shared<TrimCmdHandler>(trimhIo));
+    TrimCmdHandler trimHandler(trimhIo);
+    trimHandler.Execute();
+
+
+    POS_TRACE_ERROR(9999, "Requested TRIM from SPDK");
+
+
+    // send curren volume valid map count
 }
 
 void

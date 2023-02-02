@@ -89,15 +89,22 @@ SegmentInfo::IncreaseValidBlockCount(uint32_t inc)
 std::pair<bool, SegmentState>
 SegmentInfo::DecreaseValidBlockCount(uint32_t dec, bool allowVictimSegRelease)
 {
+    POS_TRACE_ERROR(9999, "_DecreaseValidBlockCount 0 - 0");
+
     std::lock_guard<std::mutex> lock(seglock);
     int32_t decreased = data->validBlockCount.fetch_sub(dec) - dec;
+
+    POS_TRACE_ERROR(9999, "_DecreaseValidBlockCount 0 - 0  decreased cnt {}", decreased);
 
     if (decreased == 0)
     {
         if (true == allowVictimSegRelease)
         {
+            POS_TRACE_ERROR(9999, "_DecreaseValidBlockCount 0 - 1");
+
             if (data->state == SegmentState::VICTIM || data->state == SegmentState::SSD)
             {
+                POS_TRACE_ERROR(9999, "_DecreaseValidBlockCount 0 - 2");
                 std::pair<bool, SegmentState> result = {true, data->state};
                 _MoveToFreeState();
 
@@ -106,6 +113,7 @@ SegmentInfo::DecreaseValidBlockCount(uint32_t dec, bool allowVictimSegRelease)
         }
         else
         {
+            POS_TRACE_ERROR(9999, "_DecreaseValidBlockCount 0 - 2");
             if (data->state == SegmentState::SSD)
             {
                 std::pair<bool, SegmentState> result = {true, data->state};
