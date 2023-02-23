@@ -266,21 +266,13 @@ SegmentCtx::InvalidateBlks(VirtualBlks blks, bool allowVictimSegRelease)
 {
     SegmentId segId = blks.startVsa.stripeId / addrInfo->GetstripesPerSegment();    
 
-    POS_TRACE_ERROR(9999, "Requested SegmentId {} block cnt : {} ", segId, blks.numBlks);
-
     return _DecreaseValidBlockCount(segId, blks.numBlks, allowVictimSegRelease);
 }
 
 bool
 SegmentCtx::_DecreaseValidBlockCount(SegmentId segId, uint32_t cnt, bool allowVictimSegRelease)
 {
-    POS_TRACE_ERROR(9999, "_DecreaseValidBlockCount 0 ");
-
-
     auto result = segmentInfos[segId].DecreaseValidBlockCount(cnt, allowVictimSegRelease);
-
-
-    POS_TRACE_ERROR(9999, "_DecreaseValidBlockCount 1 ");
 
     if (result.second == SegmentState::ERROR)
     {
@@ -288,9 +280,6 @@ SegmentCtx::_DecreaseValidBlockCount(SegmentId segId, uint32_t cnt, bool allowVi
             "segId{} cnt:{} , allow {}", segId, cnt, allowVictimSegRelease);
         assert(false);
     }
-
-
-    POS_TRACE_ERROR(9999, "_DecreaseValidBlockCount 2");
 
     bool segmentFreed = result.first;
     if (segmentFreed == true)
@@ -303,8 +292,6 @@ SegmentCtx::_DecreaseValidBlockCount(SegmentId segId, uint32_t cnt, bool allowVi
             segId, prevState, removed, addrInfo->GetArrayId());
         _SegmentFreed(segId);
     }
-
-    POS_TRACE_ERROR(9999, "_DecreaseValidBlockCount 2");
 
     return segmentFreed;
 }

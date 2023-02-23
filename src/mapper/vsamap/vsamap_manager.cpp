@@ -455,6 +455,30 @@ VSAMapManager::SetVSAs(int volId, BlkAddr startRba, VirtualBlks& virtualBlks)
     return _UpdateVsaMap(volId, startRba, virtualBlks);
 }
 
+
+int
+VSAMapManager::SetVSAInvalidate(int volumeId, BlkAddr startRba)
+{
+    if (false == isVsaMapAccessable[volumeId])
+    {
+        POS_TRACE_WARN(EID(VSAMAP_NOT_ACCESSIBLE), "[Mapper VSAMap] VolumeId:{} is not accessible, maybe unmounted", volumeId);
+        return ERRID(VSAMAP_NOT_ACCESSIBLE);
+    }
+
+    int ret = 0;
+    VSAMapContent* vsaMap = vsaMaps[volumeId];
+
+        ret = vsaMap->SetEntryInvalidate(startRba);
+        if (ret < 0)
+        {
+            POS_TRACE_ERROR(EID(VSAMAP_SET_FAILURE), "[Mapper VSAMap] failed to update VSAMap Info, volumeId:{}  targetRba:{}",
+                volumeId, startRba);
+        }
+    
+    return ret;
+
+}
+
 VirtualBlkAddr
 VSAMapManager::GetVSAWoCond(int volId, BlkAddr rba)
 {

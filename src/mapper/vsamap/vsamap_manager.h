@@ -72,6 +72,10 @@ public:
 
     virtual int GetVSAs(int volumeId, BlkAddr startRba, uint32_t numBlks, VsaArray& vsaArray);
     virtual int SetVSAs(int volumeId, BlkAddr startRba, VirtualBlks& virtualBlks);
+
+    virtual int SetVSAInvalidate(int volumeId, BlkAddr startRba);
+
+
     virtual VirtualBlkAddr GetRandomVSA(BlkAddr rba);
     virtual int64_t GetNumUsedBlks(int volId);
     virtual VirtualBlkAddr GetVSAWoCond(int volumeId, BlkAddr rba);

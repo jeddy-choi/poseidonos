@@ -57,6 +57,8 @@ public:
     virtual VirtualBlkAddr GetEntry(BlkAddr rba);
     virtual int SetEntry(BlkAddr rba, VirtualBlkAddr vsa);
 
+    virtual int SetEntryInvalidate(BlkAddr rba);
+
     virtual int64_t GetNumUsedBlks(void);
     virtual void SetCallback(EventSmartPtr cb);
     virtual EventSmartPtr GetCallback(void);

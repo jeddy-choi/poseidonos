@@ -139,6 +139,51 @@ VSAMapContent::SetEntry(BlkAddr rba, VirtualBlkAddr vsa)
     return 0;
 }
 
+int
+VSAMapContent::SetEntryInvalidate(BlkAddr rba)
+{
+    uint64_t pageNr = rba / entriesPerMpage;
+
+    map->GetMpageLock(pageNr);
+    char* mpage = map->GetMpage(pageNr);
+
+    if (mpage == nullptr)
+    {
+        mpage = map->AllocateMpage(pageNr);
+        if (unlikely(mpage == nullptr))
+        {
+            map->ReleaseMpageLock(pageNr);
+            return ERRID(VSAMAP_SET_FAILURE);
+        }
+        mapHeader->SetMapAllocated(pageNr);
+    }
+
+    VirtualBlkAddr* mpageMap = (VirtualBlkAddr*)mpage;
+    uint64_t entNr = rba % entriesPerMpage;
+
+    VirtualBlkAddr oldVsa = mpageMap[entNr];
+    mapHeader->UpdateNumUsedBlks(oldVsa);
+
+    mpageMap[entNr] = UNMAP_VSA;
+
+    mapHeader->SetTouchedMpageBit(pageNr);
+
+    if (internalFlushEnabled == true)
+    {
+        uint32_t numBitsSet = mapHeader->GetNumTouchedMpagesSet();
+        uint32_t totalNumBits =  mapHeader->GetNumTotalTouchedMpages();
+
+        if (((HUNDRED_PERCENT * numBitsSet) / totalNumBits) > flushThreshold)
+        {
+            flushCmdManager->UpdateVSANewEntries(mapHeader->GetMapId(), arrayId);
+        }
+    }
+
+    map->ReleaseMpageLock(pageNr);
+
+    return 0;
+}
+
 MpageList
 VSAMapContent::GetDirtyPages(uint64_t start, uint64_t numEntries)
 {
